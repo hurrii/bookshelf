@@ -1,0 +1,25 @@
+.list {
+  padding-top: 4rem;
+}
+
+.book {
+  margin: 0 0 2rem;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+
+  .name {
+    font-size: 18px;
+    line-height: 28px;
+    font-weight: 700;
+  }
+
+  .price {
+    padding-bottom: 1rem;
+  }
+}
+
+.btn-delete {
+  margin-top: auto;
+}

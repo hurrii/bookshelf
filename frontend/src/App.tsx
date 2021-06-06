@@ -1,54 +1,55 @@
 import React, { useEffect, useState } from 'react'
 import './App.scss'
-
-interface Book {
-  id: string;
-  name: string;
-  price: string;
-  category: string;
-  author: string;
-}
+import BooksList from './components/BooksList/BooksList'
+import NewBook from './components/NewBook/NewBook'
+import { Book } from './models/book.model'
+import { httpClient } from './utils/httpClient'
 
 function App() {
-  const [books, updateBooks] = useState(null)
+  const [books, updateBooks] = useState<Book[]>(null)
 
   useEffect(() => {
     fetchBooks();
   }, [])
 
   async function fetchBooks() {
-    const apiPath = 'https://localhost:5001/api/';
+    const books = await httpClient.get('Books')
 
-    try {
-      const resp = await fetch(`${apiPath}Books`, { method: 'GET', headers: { 'Content-Type': 'application/json' }});
-      const result = await resp.json();
+    if (!books) { return }
 
-      updateBooks(result);
-    } catch (err) {
-      console.error(err);
+    updateBooks(books);
+  }
+
+  async function handleBookDeletion(id: string) {
+    if (!id) { return }
+
+    const resp = await httpClient.delete(`Books/${id}`)
+
+    if (resp?.status === 204) {
+      deleteBookLocally(id)
     }
   }
 
-  let booksList: Book[] = null;
+  function deleteBookLocally(id: string) {
+    const bookIndex = books.findIndex(b => b.id === id)
 
-  if (books) {
-    booksList = books.map((book: Book) => {
-      return (
-        <ul key={book.id}>
-          <li>{book.id}</li>
-          <li>{book.name}</li>
-          <li>{book.category}</li>
-          <li>{book.author}</li>
-        </ul>
-      )
-    });
+    if (bookIndex !== undefined) {
+      const booksArray = [...books]
+
+      booksArray.splice(bookIndex, 1)
+      updateBooks(booksArray)
+    }
   }
 
-
   return (
-    <div className="app">
-      { booksList }
-    </div>
+    <main className="app">
+      <section className="section">
+        <div className="container">
+          <BooksList list={ books } handleBookDeletion={ handleBookDeletion.bind(this) }/>
+          <NewBook/>
+        </div>
+      </section>
+    </main>
   )
 }
 

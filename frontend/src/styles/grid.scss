@@ -1,0 +1,125 @@
+@use 'sass:math';
+
+$cols: 12;
+$desktopColGutter: 2rem;
+$tabletColGutter: 1.6rem;
+$mobileColGutter: .8rem;
+
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+
+    >.col {
+      flex-grow: 1;
+      flex-basis: 0;
+      max-width: 100%;
+    }
+
+    @for $colNum from 1 through $cols {
+      .col-#{$colNum} {
+        position: relative;
+        min-height: 1px;
+        width: 100%;
+      }
+    }
+  }
+
+  .container {
+    margin: 0 auto;
+  }
+
+  // Desktop
+  @include desktop {
+    .row {
+      margin: 0 0 - $desktopColGutter;
+
+      &.no-gut {
+        margin: 0;
+      }
+
+      @for $colNum from 1 through $cols {
+        .col-#{$colNum} {
+          flex: 0 0 math.div(100% * $colNum, $cols);
+          max-width: math.div(100% * $colNum, $cols);
+          padding: 0 $desktopColGutter;
+
+          .no-gut & {
+            padding: 0;
+          }
+        }
+      }
+    }
+
+    .section {
+      > .container {
+        width: var(--containerWidthDesktop);
+        padding: 0 var(--containerPaddingDesktop);
+      }
+    }
+  }
+
+
+  // Tablet
+  @include tablet {
+    .row {
+      margin: 0 0 - $tabletColGutter;
+    
+      &.no-gut {
+        margin: 0;
+      }
+
+      @for $colNum from 1 through $cols {
+        .col-#{$colNum} {
+          padding: 0 $tabletColGutter;
+
+          .no-gut & {
+            padding: 0;
+          }
+        }
+
+        .col-t-#{$colNum} {
+          flex: 0 0 math.div(100% * $colNum, $cols);
+          width: math.div(100% * $colNum, $cols);
+          padding: 0 $tabletColGutter;
+
+          .no-gut & {
+            padding: 0;
+          }
+        }
+      }
+    }
+
+    .section {
+      > .container {
+        width: var(--containerWidthTablet);
+        padding: 0 var(--containerPaddingTablet)
+      }
+    }
+  }
+
+
+  // Mobile
+  @include mobile {
+    .row {
+      margin: 0;
+  
+      @for $colNum from 1 through $cols {
+        .col-m-#{$colNum} {
+          flex: 0 0 math.div(100% * $colNum, $cols);
+          max-width: math.div(100% * $colNum, $cols);
+
+          .no-gut & {
+            padding: 0;
+          }
+        }
+      }
+    }
+
+    .section {
+      > .container {
+        padding: 0 var(--mobileContainerPadding);
+      }
+    }
+  }
