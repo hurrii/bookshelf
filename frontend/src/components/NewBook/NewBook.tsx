@@ -3,8 +3,11 @@ import { Book } from '../../models/book.model';
 import { httpClient } from '../../utils/httpClient';
 import classes from './NewBook.module.scss';
 
+interface Props {
+  fetchBooks: Function
+}
 
-function NewBook() {
+function NewBook(props: Props) {
   const [isValid, setValidity] = useState(false)
 
   const [name, setName] = useState('')
@@ -14,12 +17,19 @@ function NewBook() {
 
   async function sendForm(e: FormEvent) {
     e.preventDefault();
-    await httpClient.post('Books', { name, author, category, price })
+    await httpClient.post('books', { name, author, category, price })
+    await props.fetchBooks()
   }
 
   function validateForm(book: Book) {
     const isValid = !Object.values(book).some(val => !val)
     setValidity(isValid)
+  }
+
+  function setPriceValue(value: string) {
+    const filteredValue = value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+
+    setPrice(filteredValue)
   }
 
   useEffect(() => {
@@ -48,7 +58,11 @@ function NewBook() {
 
       <div className={ classes.field }>
         <label className={ classes.label } htmlFor="price">Price</label>
-        <input className={ classes.input } type="text" name="price" value={ price } onChange={ e => setPrice(e.target.value) }/>
+        <input className={ classes.input }
+          type="text"
+          name="price"
+          value={ price }
+          onChange={ e => setPriceValue(e.target.value) }/>
       </div>
 
       <button className={ classes['submit-btn'] } disabled={ !isValid }>Add book</button>

@@ -46,7 +46,7 @@ function App() {
       <section className="section">
         <div className="container">
           <BooksList list={ books } handleBookDeletion={ handleBookDeletion.bind(this) }/>
-          <NewBook/>
+          <NewBook fetchBooks={ fetchBooks.bind(this) } />
         </div>
       </section>
     </main>
