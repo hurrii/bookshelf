@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace BooksApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/books")]
     [ApiController]
     public class BooksController : ControllerBase
     {

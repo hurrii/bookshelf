@@ -13,7 +13,7 @@ function App() {
   }, [])
 
   async function fetchBooks() {
-    const books = await httpClient.get('Books')
+    const books = await httpClient.get('books')
 
     if (!books) { return }
 
@@ -23,7 +23,7 @@ function App() {
   async function handleBookDeletion(id: string) {
     if (!id) { return }
 
-    const resp = await httpClient.delete(`Books/${id}`)
+    const resp = await httpClient.delete(`books/${id}`)
 
     if (resp?.status === 204) {
       deleteBookLocally(id)

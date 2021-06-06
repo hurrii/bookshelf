@@ -1,5 +1,4 @@
 import React, { FormEvent, useEffect, useState } from 'react'
-import { environment } from '../../environments/environment';
 import { Book } from '../../models/book.model';
 import { httpClient } from '../../utils/httpClient';
 import classes from './NewBook.module.scss';
