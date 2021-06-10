@@ -22,7 +22,7 @@ namespace BooksApi.Services
 
       public Book Create(BookDTO bookIn)
       {
-        var book = _MapDtoToBook(bookIn);
+        var book = MapDtoToBook(bookIn);
 
         _books.InsertOne(book);
 
@@ -34,7 +34,7 @@ namespace BooksApi.Services
       public void Remove(Book bookIn) => _books.DeleteOne(book => book.Id == bookIn.Id);
       public void Remove(string id) => _books.DeleteOne(book => book.Id == id);
 
-      public BookDTO _MapBookToDto(Book book)
+      public BookDTO MapBookToDto(Book book)
       {
         return new BookDTO {
           Name = book.Name,
@@ -44,7 +44,7 @@ namespace BooksApi.Services
         };
       }
 
-      public Book _MapDtoToBook(BookDTO bookIn)
+      public Book MapDtoToBook(BookDTO bookIn)
       {
         return new Book {
           Name = bookIn.Name,
