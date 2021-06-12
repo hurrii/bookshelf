@@ -31,22 +31,26 @@ namespace BooksApi.Services
 
         public User Create(UserDTO userIn)
         {
-          var user = MapDtoToUser(userIn);
+          var passwordHash = BCrypt.Net.BCrypt.HashPassword(userIn.Password);
 
-          _users.InsertOne(user);
-          return user;
+          var newUser = new User {
+            Email = userIn.Email,
+            Password = passwordHash
+          };
+
+          _users.InsertOne(newUser);
+          return newUser;
         }
 
         public string Authenticate(string email, string password)
         {
-          var user = _users.Find(user => user.Email == email && user.Password == password).FirstOrDefault();
+          var user = _users.Find(user => user.Email == email).FirstOrDefault();
 
-          if (user == null)
+          if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
             return null;
 
           var tokenHandler = new JwtSecurityTokenHandler();
 
-          Console.WriteLine(jwtKey);
           var tokenKey = Encoding.ASCII.GetBytes(jwtKey.ToString());
 
           var tokenDescriptior = new SecurityTokenDescriptor() {
@@ -65,18 +69,7 @@ namespace BooksApi.Services
 
           var token = tokenHandler.CreateToken(tokenDescriptior);
 
-          Console.WriteLine("service token:");
-          Console.WriteLine(tokenHandler.WriteToken(token));
-
           return tokenHandler.WriteToken(token);
-        }
-
-        private User MapDtoToUser(UserDTO userIn)
-        {
-          return new User {
-            Email = userIn.Email,
-            Password = userIn.Password
-          };
         }
     }
 }
