@@ -31,6 +31,11 @@ namespace BooksApi.Services
 
         public User Create(UserDTO userIn)
         {
+          var existingUser = _users.Find(user => user.Email == userIn.Email).FirstOrDefault();
+
+          if (existingUser != null)
+            return null;
+
           var passwordHash = BCrypt.Net.BCrypt.HashPassword(userIn.Password);
 
           var newUser = new User {

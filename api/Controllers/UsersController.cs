@@ -1,3 +1,4 @@
+using System.Net;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +33,10 @@ namespace BooksApi.Controllers
       public ActionResult<User> Create(UserDTO user)
       {
         var result = _service.Create(user);
+
+        if (result == null)
+          return Conflict(new { message = $"Email address '{user.Email}' is already in use" });
+
         return CreatedAtRoute("GetUser", new { id = result.Id }, result);
       }
 
