@@ -16,6 +16,9 @@ namespace BooksApi.Models
 
         [JsonProperty("password")]
         public string Password { get; set; }
+
+        [JsonProperty("username")]
+        public string Username { get; set; }
     }
 
     public class UserDTO
@@ -25,5 +28,26 @@ namespace BooksApi.Models
 
         [JsonProperty("password")]
         public string Password { get; set; }
+
+        [JsonProperty("username")]
+        public string Username { get; set; }
+    }
+
+    public class LoginRequest
+    {
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        [JsonProperty("password")]
+        public string Password { get; set; }
+    }
+
+    public class UserUpdateDTO
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("username")]
+        public string Username { get; set; }
     }
 }

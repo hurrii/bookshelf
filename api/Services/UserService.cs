@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using MongoDB.Driver;
+using MongoDB.Bson;
+using System.Reflection;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
@@ -40,11 +42,32 @@ namespace BooksApi.Services
 
           var newUser = new User {
             Email = userIn.Email,
-            Password = passwordHash
+            Username = userIn.Username,
+            Password = passwordHash,
           };
 
           _users.InsertOne(newUser);
           return newUser;
+        }
+
+        public User Update(UserUpdateDTO userUpdates)
+        {
+          if (userUpdates.Id == null)
+            return null;
+
+          var filter = Builders<User>.Filter.Eq("_id", ObjectId.Parse(userUpdates.Id));
+
+          foreach (PropertyInfo prop in userUpdates.GetType().GetProperties())
+          {
+            if (prop.Name == "Id" || prop.GetValue(userUpdates) == null)
+              continue;
+
+            var update = Builders<User>.Update.Set(prop.Name, prop.GetValue(userUpdates));
+
+            _users.UpdateOne(filter, update);
+          }
+
+          return _users.Find(filter).FirstOrDefault();
         }
 
         public string Authenticate(string email, string password)

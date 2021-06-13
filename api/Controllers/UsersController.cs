@@ -1,4 +1,3 @@
-using System.Net;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,10 +39,14 @@ namespace BooksApi.Controllers
         return CreatedAtRoute("GetUser", new { id = result.Id }, result);
       }
 
+      [HttpPut]
+      public ActionResult<User> Update([FromBody] UserUpdateDTO userUpdates) =>
+        _service.Update(userUpdates);
+
       [AllowAnonymous]
       [Route("login")]
       [HttpPost]
-      public ActionResult Login([FromBody] UserDTO user)
+      public ActionResult Login([FromBody] LoginRequest user)
       {
         var token = _service.Authenticate(user.Email, user.Password);
 
