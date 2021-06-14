@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,20 +29,25 @@ namespace BooksApi.Controllers
         return user;
       }
 
-      [HttpPost]
-      public ActionResult<User> Create(UserDTO user)
-      {
-        var result = _service.Create(user);
-
-        if (result == null)
-          return Conflict(new { message = $"Email address '{user.Email}' is already in use" });
-
-        return CreatedAtRoute("GetUser", new { id = result.Id }, result);
-      }
-
       [HttpPut]
       public ActionResult<User> Update([FromBody] UserUpdateDTO userUpdates) =>
         _service.Update(userUpdates);
+
+      [AllowAnonymous]
+      [Route("register")]
+      [HttpPost]
+      public ActionResult<User> Register(UserDTO user)
+      {
+        try
+        {
+          var result = _service.Register(user);
+          return CreatedAtRoute("Register", result);
+        }
+        catch (ArgumentException err)
+        {
+            return BadRequest(new { message = err.Message });
+        }
+      }
 
       [AllowAnonymous]
       [Route("login")]

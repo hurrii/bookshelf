@@ -17,6 +17,8 @@ namespace BooksApi.Services
         private readonly IMongoCollection<User> _users;
         private readonly string jwtKey;
 
+        private readonly int minPasswordLength = 4;
+
         public UserService(IBookstoreDatabaseSettings settings)
         {
           this.jwtKey = settings.JwtKey;
@@ -31,12 +33,20 @@ namespace BooksApi.Services
 
         public User GetUser(string id) => _users.Find(user => user.Id == id).FirstOrDefault();
 
-        public User Create(UserDTO userIn)
+        public User Register(UserDTO userIn)
         {
+          if (userIn.Password.Length < minPasswordLength)
+            throw new ArgumentException($"Password should be at least {minPasswordLength} characters long");
+
           var existingUser = _users.Find(user => user.Email == userIn.Email).FirstOrDefault();
 
           if (existingUser != null)
-            return null;
+            throw new ArgumentException("Email address is already in use");
+
+          var existingUsername = _users.Find(user => user.Username == userIn.Username);
+
+          if (existingUsername != null)
+            throw new ArgumentException("Username is already taken");
 
           var passwordHash = BCrypt.Net.BCrypt.HashPassword(userIn.Password);
 
