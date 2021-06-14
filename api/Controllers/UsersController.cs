@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using BooksApi.Services;
@@ -30,8 +31,20 @@ namespace BooksApi.Controllers
       }
 
       [HttpPut]
-      public ActionResult<User> Update([FromBody] UserUpdateDTO userUpdates) =>
-        _service.Update(userUpdates);
+      public ActionResult<User> Update([FromBody] UserUpdateDTO userUpdates)
+      {
+        try
+        {
+          var claimsIdentity = this.User.Identity as ClaimsIdentity;
+          var email = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value;
+
+          return _service.Update(userUpdates, email);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
+      }
 
       [AllowAnonymous]
       [Route("register")]
@@ -41,7 +54,7 @@ namespace BooksApi.Controllers
         try
         {
           var result = _service.Register(user);
-          return CreatedAtRoute("Register", result);
+          return CreatedAtRoute("GetUser", result);
         }
         catch (ArgumentException err)
         {

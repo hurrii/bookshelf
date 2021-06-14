@@ -43,7 +43,9 @@ namespace BooksApi.Services
           if (existingUser != null)
             throw new ArgumentException("Email address is already in use");
 
-          var existingUsername = _users.Find(user => user.Username == userIn.Username);
+          var existingUsername = _users.Find(user => user.Username == userIn.Username).FirstOrDefault();
+
+          Console.WriteLine(existingUsername);
 
           if (existingUsername != null)
             throw new ArgumentException("Username is already taken");
@@ -60,10 +62,13 @@ namespace BooksApi.Services
           return newUser;
         }
 
-        public User Update(UserUpdateDTO userUpdates)
+        public User Update(UserUpdateDTO userUpdates, string email)
         {
-          if (userUpdates.Id == null)
-            return null;
+          var currentUser = _users.Find(user => user.Email == email).FirstOrDefault();
+          var isSameUser = currentUser.Id == userUpdates.Id;
+
+          if (!isSameUser)
+            throw new UnauthorizedAccessException();
 
           var filter = Builders<User>.Filter.Eq("_id", ObjectId.Parse(userUpdates.Id));
 

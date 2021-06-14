@@ -49,6 +49,7 @@ namespace BooksApi.Models
 
     public class UserUpdateDTO
     {
+        [Required()]
         [JsonProperty("id")]
         public string Id { get; set; }
 
