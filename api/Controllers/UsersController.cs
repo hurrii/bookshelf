@@ -36,9 +36,9 @@ namespace BooksApi.Controllers
         try
         {
           var claimsIdentity = this.User.Identity as ClaimsIdentity;
-          var email = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value;
+          var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-          return _service.Update(userUpdates, email);
+          return _service.Update(userUpdates, userId);
         }
         catch (UnauthorizedAccessException)
         {
@@ -54,7 +54,7 @@ namespace BooksApi.Controllers
         try
         {
           var result = _service.Register(user);
-          return CreatedAtRoute("GetUser", result);
+          return CreatedAtRoute("GetUser", new { id = result.Id }, result);
         }
         catch (ArgumentException err)
         {

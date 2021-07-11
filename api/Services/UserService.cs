@@ -45,8 +45,6 @@ namespace BooksApi.Services
 
           var existingUsername = _users.Find(user => user.Username == userIn.Username).FirstOrDefault();
 
-          Console.WriteLine(existingUsername);
-
           if (existingUsername != null)
             throw new ArgumentException("Username is already taken");
 
@@ -62,10 +60,9 @@ namespace BooksApi.Services
           return newUser;
         }
 
-        public User Update(UserUpdateDTO userUpdates, string email)
+        public User Update(UserUpdateDTO userUpdates, string userId)
         {
-          var currentUser = _users.Find(user => user.Email == email).FirstOrDefault();
-          var isSameUser = currentUser.Id == userUpdates.Id;
+          var isSameUser = userId == userUpdates.Id;
 
           if (!isSameUser)
             throw new UnauthorizedAccessException();
@@ -96,10 +93,11 @@ namespace BooksApi.Services
 
           var tokenKey = Encoding.ASCII.GetBytes(jwtKey.ToString());
 
-          var tokenDescriptior = new SecurityTokenDescriptor() {
+          var tokenDescriptior = new SecurityTokenDescriptor()
+          {
 
             Subject = new ClaimsIdentity(new Claim[] {
-              new Claim(ClaimTypes.Email, email)
+              new Claim(ClaimTypes.NameIdentifier, user.Id)
             }),
 
             Expires = DateTime.UtcNow.AddHours(1),

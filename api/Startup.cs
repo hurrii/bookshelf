@@ -48,6 +48,7 @@ namespace BooksApi
 
             services.AddSingleton<BookService>();
             services.AddSingleton<UserService>();
+            services.AddSingleton<BookshelfService>();
 
             services.AddControllers()
                 .AddNewtonsoftJson(options => options.UseMemberCasing());

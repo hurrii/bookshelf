@@ -1,8 +1,8 @@
 using BooksApi.Models;
 using BooksApi.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Cors;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BooksApi.Controllers
 {
@@ -58,7 +58,7 @@ namespace BooksApi.Controllers
         }
 
         [HttpDelete("{id:length(24)}")]
-        public IActionResult Delete(string id)
+        public IActionResult Delete([Required]string id)
         {
           var book = _bookService.Get(id);
 
