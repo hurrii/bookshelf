@@ -22,7 +22,7 @@ namespace BooksApi.Controllers
       }
 
       [HttpGet]
-      [Route("my")]
+      [Route("books")]
       public ActionResult<List<Book>> Get()
       {
         var userId = _GetUserId();
@@ -30,7 +30,7 @@ namespace BooksApi.Controllers
         if (String.IsNullOrEmpty(userId))
           return Unauthorized();
 
-        var books = _service.Get(userId);
+        var books = _service.GetBooks(userId);
 
         if (books == null)
           return NotFound();

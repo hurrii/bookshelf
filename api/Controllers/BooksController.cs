@@ -19,12 +19,12 @@ namespace BooksApi.Controllers
 
         [HttpGet]
         public ActionResult<List<Book>> Get() =>
-          _bookService.Get();
+          _bookService.GetBooksList();
 
         [HttpGet("{id:length(24)}", Name = "GetBook")]
-        public ActionResult<Book> Get(string id)
+        public ActionResult<Book> GetBook(string id)
         {
-          var book = _bookService.Get(id);
+          var book = _bookService.GetBook(id);
 
           if (book == null)
           {
@@ -35,39 +35,31 @@ namespace BooksApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Book> Create(BookDTO book)
+        public ActionResult<Book> CreateBook(BookDTO book)
         {
-          var result = _bookService.Create(book);
+          var result = _bookService.CreateBook(book);
 
           return CreatedAtRoute("GetBook", new { id = result.Id }, result);
         }
 
         [HttpPut("{id:length(24)}")]
-        public IActionResult Update(string id, Book bookIn)
+        public IActionResult UpdateBook(string id, BookDTO bookItem)
         {
-          var book = _bookService.Get(id);
+          var result = _bookService.UpdateBook(id, bookItem);
 
-          if (book == null)
-          {
+          if (result.ModifiedCount == 0)
             return NotFound();
-          }
 
-          _bookService.Update(id, bookIn);
-
-          return NoContent();
+          return NoContent(); // TODO: return a book
         }
 
         [HttpDelete("{id:length(24)}")]
-        public IActionResult Delete([Required]string id)
+        public IActionResult DeleteBook([Required]string id)
         {
-          var book = _bookService.Get(id);
+          var result = _bookService.DeleteBook(id.ToString());
 
-          if (book == null)
-          {
+          if (result.DeletedCount == 0)
             return NotFound();
-          }
-
-          _bookService.Remove(book.Id.ToString());
 
           return NoContent();
         }

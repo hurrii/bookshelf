@@ -31,7 +31,7 @@ namespace BooksApi.Controllers
       }
 
       [HttpPut]
-      public ActionResult<User> Update([FromBody] UserUpdateDTO userUpdates)
+      public ActionResult<User> UpdateUser([FromBody] UserUpdateDTO userUpdates)
       {
         try
         {

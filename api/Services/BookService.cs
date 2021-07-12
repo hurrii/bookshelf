@@ -16,11 +16,11 @@ namespace BooksApi.Services
         _books = database.GetCollection<Book>(settings.BooksCollectionName);
       }
 
-      public List<Book> Get() => _books.Find(book => true).ToList();
+      public List<Book> GetBooksList() => _books.Find(book => true).ToList();
 
-      public Book Get(string id) => _books.Find<Book>(book => book.Id == id).FirstOrDefault();
+      public Book GetBook(string id) => _books.Find<Book>(book => book.Id == id).FirstOrDefault();
 
-      public Book Create(BookDTO bookIn)
+      public Book CreateBook(BookDTO bookIn)
       {
         var book = MapDtoToBook(bookIn);
 
@@ -29,24 +29,19 @@ namespace BooksApi.Services
         return book;
       }
 
-      public void Update(string id, Book bookIn) => _books.ReplaceOne(book => book.Id == id, bookIn);
-
-      public void Remove(Book bookIn) => _books.DeleteOne(book => book.Id == bookIn.Id);
-      public void Remove(string id) => _books.DeleteOne(book => book.Id == id);
-
-      public BookDTO MapBookToDto(Book book)
+      public ReplaceOneResult UpdateBook(string id, BookDTO bookItem)
       {
-        return new BookDTO {
-          Name = book.Name,
-          Price = book.Price,
-          Category = book.Category,
-          Author = book.Author
-        };
+        var book = MapDtoToBook(bookItem, id);
+
+        return _books.ReplaceOne(book => book.Id == id, book);
       }
 
-      public Book MapDtoToBook(BookDTO bookIn)
+      public DeleteResult DeleteBook(string id) => _books.DeleteOne(book => book.Id == id);
+
+      private Book MapDtoToBook(BookDTO bookIn, string id = null)
       {
         return new Book {
+          Id = id,
           Name = bookIn.Name,
           Price = bookIn.Price,
           Category = bookIn.Category,

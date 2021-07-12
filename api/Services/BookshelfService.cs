@@ -19,27 +19,14 @@ namespace BooksApi.Services
           _books = db.GetCollection<Book>(settings.BooksCollectionName);
         }
 
-        public List<Book> Get(string userId)
+        public List<Book> GetBooks(string userId)
         {
           var bookshelf = _bookshelves.Find(bookshelf => bookshelf.ownerId == userId).FirstOrDefault();
 
-          if (bookshelf.books == null || bookshelf.books.Count == 0)
+          if (bookshelf?.books == null || bookshelf.books.Count == 0)
             return null;
 
-
-          var books = new List<Book>();
-
-          foreach (var bookId in bookshelf.books)
-          {
-              var book = _books.Find(_book => _book.Id == bookId).FirstOrDefault();
-
-              if (book == null)
-                continue;
-
-              books.Add(book);
-          }
-
-          return books;
+          return _books.Find(book => bookshelf.books.Contains(book.Id)).ToList();
         }
 
         public Bookshelf AddBook(string userId, string bookId)
@@ -49,13 +36,10 @@ namespace BooksApi.Services
           if (!doesBookExist)
             return null;
 
-
           var update = Builders<Bookshelf>.Update.AddToSet(x => x.books, bookId);
-          var options = new  FindOneAndUpdateOptions<Bookshelf, Bookshelf>() { IsUpsert = true };
+          var options = new FindOneAndUpdateOptions<Bookshelf, Bookshelf>() { IsUpsert = true }; // TODO: create a bookshelf on user's register
 
           var bookshelf = _bookshelves.FindOneAndUpdate<Bookshelf>(bookshelf => bookshelf.ownerId == userId, update, options);
-
-          System.Console.WriteLine(bookshelf);
 
           return bookshelf;
         }
